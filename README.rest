@@ -1,0 +1,5 @@
+SRFI.js
+========
+
+SRFI.js is JavaScript library that provides useful functions from SRFI (http://srfi.schemers.org/).
+

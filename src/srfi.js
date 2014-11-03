@@ -1,3 +1,4 @@
+'use strict';
 ;(function(definition){
   // CommonJS
   if(typeof exports === 'object'){
@@ -6,8 +7,8 @@
   } else {
     srfi = definition();
   }
+
 })(function(){
-  'use strict';
 
   var srfi = {
     VERSION: '0.0.1',

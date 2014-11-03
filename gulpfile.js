@@ -26,16 +26,16 @@ var MAIN_JS_FILE_NAME = 'srfi.js',
 /*
  * Others
  */
-gulp.task('clean:all', function(){
-  del([DIST, DIST_SPEC]);
+gulp.task('clean:all', function(callback){
+  del([DIST, DIST_SPEC], callback);
 });
 
-gulp.task('clean:product', function(){
-  del([DIST]);
+gulp.task('clean:product', function(callback){
+  del([DIST], callback);
 });
 
-gulp.task('clean:spec', function(){
-  del([DIST_SPEC]);
+gulp.task('clean:spec', function(callback){
+  del([DIST_SPEC], callback);
 });
 
 var swallowError = function(error){
@@ -109,7 +109,6 @@ gulp.task('jshint', function(){
     pipe($.jshint.reporter('jshint-stylish'));
 });
 
-
 /*
  * Main tasks
  */
@@ -130,3 +129,21 @@ gulp.task('test', function(){
     'jasmine');
 });
 
+// gulp.task('watch', ['watchify'], function(){
+gulp.task('watch', function(){
+  $.watch(SRC+'/**/*.js', function(files, callback){
+    runSequence(
+      'clean:product',
+      ['browserify', 'jshint'],
+      'jasmine',
+      callback);
+  });
+
+  $.watch(SPEC+'/**/*.js', function(files, callback){
+    runSequence(
+      'clean:spec',
+      ['power-assert', 'jshint'],
+      'jasmine',
+      callback);
+  });
+});

@@ -15,7 +15,7 @@ var browserify = require('browserify'),
     source = require('vinyl-source-stream');
 
 // filepaths
-var SRC       = './src',
+var SRC       = './lib',
     SPEC      = './spec',
     DIST      = './dist',
     DIST_SPEC = './dist_spec';
@@ -46,31 +46,6 @@ var swallowError = function(error){
 /*
  * JavaScript
  */
-function scripts(watch) {
-  var files = glob.sync(SRC + '/**/*.js'),
-      config = { entries :files,
-                 debug: watch, cache: {},
-                 packageCache: {}, fullPaths: true },
-      bundler = browserify(config),
-      rebundle = function() {
-        return bundler.bundle().
-          on('error', swallowError).
-          pipe(source(MAIN_JS_FILE_NAME)).
-          pipe(gulp.dest(DIST));
-      };
-
-  bundler = watch ? watchify(bundler) : bundler;
-  bundler.on('update', rebundle);
-  return rebundle();
-}
-
-gulp.task('browserify', function(){
-  return scripts(false);
-});
-
-gulp.task('watchify', function(){
-  return scripts(true);
-});
 
 /*
  * Unit Test
@@ -98,7 +73,7 @@ gulp.task('jasmine', function(){
  * Build stuffs
  */
 gulp.task('uglify', function(){
-  return gulp.src(DIST + '/*.js').
+  return gulp.src(SRC + '/**/*.js').
     pipe($.uglify()).
     pipe(gulp.dest(DIST));
 });
@@ -117,7 +92,7 @@ gulp.task('default', ['build']);
 gulp.task('build', function(){
   return runSequence(
     'clean:all',
-    ['power-assert', 'browserify', 'jshint'],
+    ['power-assert', 'jshint'],
     'jasmine',
     'uglify');
 });
@@ -129,21 +104,18 @@ gulp.task('test', function(){
     'jasmine');
 });
 
-// gulp.task('watch', ['watchify'], function(){
-gulp.task('watch', function(){
-  $.watch(SRC+'/**/*.js', function(files, callback){
+gulp.task('watch', ['build'], function(){
+  gulp.watch(SRC+'/**/*.js', function(){
     runSequence(
       'clean:product',
-      ['browserify', 'jshint'],
-      'jasmine',
-      callback);
+      ['jshint', 'jasmine']
+    );
   });
 
-  $.watch(SPEC+'/**/*.js', function(files, callback){
+  gulp.watch(SPEC+'/**/*.js', function(){
     runSequence(
       'clean:spec',
       ['power-assert', 'jshint'],
-      'jasmine',
-      callback);
+      'jasmine');
   });
 });

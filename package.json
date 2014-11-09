@@ -20,6 +20,11 @@
     "url": "https://github.com/ayato0211/srfi.js/issues"
   },
   "homepage": "https://github.com/ayato0211/srfi.js",
+  "files": [
+    "./lib/srfi.js",
+    "./lib/**/*.js",
+    "./README.rest"
+  ],
   "devDependencies": {
     "browserify": "^6.2.0",
     "del": "^0.1.3",
